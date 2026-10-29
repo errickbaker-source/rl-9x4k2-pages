@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>.50 AE Load Search</title>
+<style>
+html { color-scheme: light; }
+body {
+  font-family: system-ui, sans-serif;
+  margin: 0;
+  background: #f4f4f1;
+  color: #161616;
+}
+.app {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 10px 12px calc(28px + env(safe-area-inset-bottom));
+}
+h1 { font-size: 1.25rem; line-height: 1.2; margin: 2px 0 8px; }
+.warn {
+  background: #fdecea;
+  border: 1px solid #c0392b;
+  padding: 8px 10px;
+  font-size: .85rem;
+  line-height: 1.35;
+  margin: 0 0 8px;
+}
+.snap { font-size: .8rem; color: #555; line-height: 1.35; margin: 0 0 10px; }
+.f, .sortrow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+.f > *, .sortrow > * { min-width: 0; }
+.wide { grid-column: 1 / -1; }
+@media (max-width: 359px) {
+  .f { grid-template-columns: minmax(0, 1fr); }
+}
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: .75rem;
+  font-weight: 600;
+  color: #333;
+  min-width: 0;
+}
+select, input, button {
+  font: inherit;
+  font-size: 16px;
+  min-height: 44px;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  border: 1px solid #c8c4bb;
+  border-radius: 8px;
+  background: #fff;
+  color: #161616;
+  width: 100%;
+  touch-action: manipulation;
+}
+select, input { padding-right: 8px; }
+button { width: auto; cursor: pointer; }
+select:focus, input:focus, button:focus {
+  outline: 2px solid #1d4e89;
+  outline-offset: 1px;
+}
+.bar { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
+.bar button { padding: 8px 16px; background: #fff; }
+#cnt { font-size: .9rem; color: #333; }
+.card {
+  background: #fff;
+  border: 1px solid #d5d1c8;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 8px 0;
+  overflow-wrap: anywhere;
+}
+.warn, .snap, h1 { overflow-wrap: anywhere; }
+.card b { font-size: 1.02em; }
+.k { color: #5c5c5c; font-size: .8rem; }
+.n { font-size: .8rem; color: #333; margin-top: 4px; }
+.pub { color: #0b6b2e; }
+.grt { color: #b00020; font-weight: bold; }
+.lad { color: #8a5a00; }
+.more { font-size: .85rem; color: #444; }
+.print-btn {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  background: #fff;
+  font-weight: 600;
+  scroll-margin-top: 96px;
+  scroll-margin-bottom: 16px;
+}
+@media (min-width: 720px) {
+  .f { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.sortrow {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin: 0 -12px;
+  padding: 10px 12px 8px;
+  background: #f4f4f1;
+  border-bottom: 1px solid #d5d1c8;
+}
+#printcard { display: none; }
+.sheet { color: #000; }
+.kicker {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  font-size: 10pt;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.sheet h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 22pt;
+  line-height: 1.05;
+  margin: 2px 0 4px;
+}
+.kind {
+  margin: 0 0 8px;
+  font-family: system-ui, sans-serif;
+  font-size: 9pt;
+}
+.print-warn {
+  font-family: system-ui, sans-serif;
+  font-size: 8.5pt;
+  line-height: 1.35;
+  margin: 0 0 8px;
+}
+.prow {
+  display: grid;
+  grid-template-columns: 1.35in minmax(0, 1fr);
+  gap: 2px 10px;
+  padding: 3px 0;
+  border-top: 0.6pt solid #666;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.plab {
+  font-family: system-ui, sans-serif;
+  font-size: 8pt;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  padding-top: 3px;
+}
+.pval {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 12pt;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+@page { margin: 0.45in; }
+@media print {
+  html, body { background: #fff !important; margin: 0; padding: 0; }
+  .app { display: none !important; }
+  #printcard { display: block !important; }
+  .sheet { max-width: none; }
+  .print-warn {
+    background: #fff !important;
+    color: #000 !important;
+    border: 1.5pt solid #000 !important;
+  }
+}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>.50 Action Express Load Search</h1>
+<div class="warn" id="safety"><b>SAFETY:</b> data copied from the named free public sources (Hodgdon Reloading Data Center, Speer/Federal load data PDFs, Vihtavuori Reloading Guide 2025, Hornady Basic Pistol Data). Copying errors are possible. Always cross-check against the current manual from that publisher. .50 AE is a high-pressure round: start at the listed start charge and work up carefully, never exceed the listed maximum, and use only the exact components listed. Not a substitute for a manual.</div>
+<div class="snap">READ-ONLY SNAPSHOT of free .50 Action Express data from 4 publishers (36 loads, built 2026-10-29). Each card shows start and maximum charge exactly as published. Free .50 AE data is limited; full manuals have more. This page needs no internet.</div>
+<noscript><p>JavaScript is required to search the loads embedded in this file. The page still does not use the network.</p></noscript>
+<div class="f" id="f"></div>
+<div class="sortrow">
+  <label>Sort by
+    <select id="so">
+      <option value="ID">Source order</option>
+      <option value="Max charge (gr)">Max charge</option>
+      <option value="Start charge (gr)">Start charge</option>
+      <option value="Max velocity (fps)">Max velocity</option>
+      <option value="Powder">Powder</option>
+      <option value="Bullet weight (gr)">Bullet weight</option>
+    </select>
+  </label>
+  <label>Order
+    <select id="dir">
+      <option value="1">Ascending</option>
+      <option value="-1">Descending</option>
+    </select>
+  </label>
+</div>
+<div class="bar"><button type="button" id="clr">Clear</button> <span id="cnt"></span></div>
+<div id="out"></div>
+</div>
+<div id="printcard" aria-hidden="true"></div>
+<script>
+const D=[{"ID":"HDG-1","Source":"Hodgdon Reloading Data Center","Source URL":"https://hodgdonreloading.com/rldc/?t=2&c=50%20Action%20Express","Bullet weight (gr)":"325","Bullet":"SPR JHP (Speer)","Powder maker":"Hodgdon","Powder":"H110","Start charge (gr)":"29.0","Start velocity (fps)":"1250","Max charge (gr)":"32.5","Max velocity (fps)":"1431","COAL":"1.575\"","Primer":"CCI 350, Large Pistol Magnum","Case":"Speer","Test gun / barrel":"Test barrel 6\", twist 1:19\"","Pressure":"not listed","Notes":"Trim length 1.280\". Hodgdon gives start and maximum charges.","Raw copy":"p50_raw/hodgdon_50ae_raw.txt"},{"ID":"HDG-2","Source":"Hodgdon Reloading Data Center","Source URL":"https://hodgdonreloading.com/rldc/?t=2&c=50%20Action%20Express","Bullet weight (gr)":"325","Bullet":"SPR JHP (Speer)","Powder maker":"Hodgdon","Powder":"H4227","Start charge (gr)":"29.0","Start velocity (fps)":"1201","Max charge (gr)":"30.8","Max velocity (fps)":"1294","COAL":"1.575\"","Primer":"CCI 350, Large Pistol Magnum","Case":"Speer","Test gun / barrel":"Test barrel 6\", twist 1:19\"","Pressure":"not listed","Notes":"Trim length 1.280\". Hodgdon gives start and maximum charges.","Raw copy":"p50_raw/hodgdon_50ae_raw.txt"},{"ID":"SPR-1","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_300_Auto.pdf","Bullet weight (gr)":"300","Bullet":"Speer TMJ FN (part 4490) or DCHP (part 4493)","Powder maker":"Winchester","Powder":"296","Start charge (gr)":"33.5","Start velocity (fps)":"1466","Max charge (gr)":"34.5","Max velocity (fps)":"1567","COAL":"1.580\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Auto-pistol table (test gun not named in PDF)","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_300_Auto.pdf"},{"ID":"SPR-2","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_300_Auto.pdf","Bullet weight (gr)":"300","Bullet":"Speer TMJ FN (part 4490) or DCHP (part 4493)","Powder maker":"Hodgdon","Powder":"H110","Start charge (gr)":"33.5","Start velocity (fps)":"1482","Max charge (gr)":"34.5","Max velocity (fps)":"1510","COAL":"1.580\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Auto-pistol table (test gun not named in PDF)","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_300_Auto.pdf"},{"ID":"SPR-3","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_300_Auto.pdf","Bullet weight (gr)":"300","Bullet":"Speer TMJ FN (part 4490) or DCHP (part 4493)","Powder maker":"Vihtavuori","Powder":"N110","Start charge (gr)":"28.0","Start velocity (fps)":"1418","Max charge (gr)":"29.0","Max velocity (fps)":"1501","COAL":"1.580\" (COAL tested)","Primer":"CCI 300","Case":"Speer","Test gun / barrel":"Auto-pistol table (test gun not named in PDF)","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_300_Auto.pdf"},{"ID":"SPR-4","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_300_Auto.pdf","Bullet weight (gr)":"300","Bullet":"Speer TMJ FN (part 4490) or DCHP (part 4493)","Powder maker":"Alliant","Powder":"2400","Start charge (gr)":"28.0","Start velocity (fps)":"1368","Max charge (gr)":"29.0","Max velocity (fps)":"1435","COAL":"1.580\" (COAL tested)","Primer":"CCI 300","Case":"Speer","Test gun / barrel":"Auto-pistol table (test gun not named in PDF)","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_300_Auto.pdf"},{"ID":"SPR-5","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_300_Auto.pdf","Bullet weight (gr)":"300","Bullet":"Speer TMJ FN (part 4490) or DCHP (part 4493)","Powder maker":"Accurate","Powder":"No. 9","Start charge (gr)":"25.0","Start velocity (fps)":"1343","Max charge (gr)":"26.0","Max velocity (fps)":"1380","COAL":"1.580\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Auto-pistol table (test gun not named in PDF)","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_300_Auto.pdf"},{"ID":"SPR-6","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_300_Auto.pdf","Bullet weight (gr)":"300","Bullet":"Speer TMJ FN (part 4490) or DCHP (part 4493)","Powder maker":"IMR","Powder":"4227","Start charge (gr)":"31.5","Start velocity (fps)":"1266","Max charge (gr)":"32.5","Max velocity (fps)":"1303","COAL":"1.580\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Auto-pistol table (test gun not named in PDF)","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_300_Auto.pdf"},{"ID":"SPR-7","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_300_Revolver.pdf","Bullet weight (gr)":"300","Bullet":"Speer TMJ FN (part 4490) or DCHP (part 4493)","Powder maker":"Winchester","Powder":"296","Start charge (gr)":"33.5","Start velocity (fps)":"1465","Max charge (gr)":"34.5","Max velocity (fps)":"1526","COAL":"1.580\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Revolver velocities: Freedom Arms M555 7.5\"","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_300_Revolver.pdf"},{"ID":"SPR-8","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_300_Revolver.pdf","Bullet weight (gr)":"300","Bullet":"Speer TMJ FN (part 4490) or DCHP (part 4493)","Powder maker":"Vihtavuori","Powder":"N110","Start charge (gr)":"28.0","Start velocity (fps)":"1445","Max charge (gr)":"29.0","Max velocity (fps)":"1509","COAL":"1.580\" (COAL tested)","Primer":"CCI 300","Case":"Speer","Test gun / barrel":"Revolver velocities: Freedom Arms M555 7.5\"","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_300_Revolver.pdf"},{"ID":"SPR-9","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_300_Revolver.pdf","Bullet weight (gr)":"300","Bullet":"Speer TMJ FN (part 4490) or DCHP (part 4493)","Powder maker":"Hodgdon","Powder":"H110","Start charge (gr)":"33.5","Start velocity (fps)":"1448","Max charge (gr)":"34.5","Max velocity (fps)":"1505","COAL":"1.580\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Revolver velocities: Freedom Arms M555 7.5\"","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_300_Revolver.pdf"},{"ID":"SPR-10","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_300_Revolver.pdf","Bullet weight (gr)":"300","Bullet":"Speer TMJ FN (part 4490) or DCHP (part 4493)","Powder maker":"Alliant","Powder":"2400","Start charge (gr)":"28.0","Start velocity (fps)":"1435","Max charge (gr)":"29.0","Max velocity (fps)":"1483","COAL":"1.580\" (COAL tested)","Primer":"CCI 300","Case":"Speer","Test gun / barrel":"Revolver velocities: Freedom Arms M555 7.5\"","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_300_Revolver.pdf"},{"ID":"SPR-11","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_300_Revolver.pdf","Bullet weight (gr)":"300","Bullet":"Speer TMJ FN (part 4490) or DCHP (part 4493)","Powder maker":"Accurate","Powder":"No. 7","Start charge (gr)":"21.5","Start velocity (fps)":"1282","Max charge (gr)":"23.5","Max velocity (fps)":"1437","COAL":"1.580\" (COAL tested)","Primer":"CCI 300","Case":"Speer","Test gun / barrel":"Revolver velocities: Freedom Arms M555 7.5\"","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_300_Revolver.pdf"},{"ID":"SPR-12","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_300_Revolver.pdf","Bullet weight (gr)":"300","Bullet":"Speer TMJ FN (part 4490) or DCHP (part 4493)","Powder maker":"Accurate","Powder":"No. 9","Start charge (gr)":"25.0","Start velocity (fps)":"1404","Max charge (gr)":"26.0","Max velocity (fps)":"1426","COAL":"1.580\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Revolver velocities: Freedom Arms M555 7.5\"","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_300_Revolver.pdf"},{"ID":"SPR-13","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_300_Revolver.pdf","Bullet weight (gr)":"300","Bullet":"Speer TMJ FN (part 4490) or DCHP (part 4493)","Powder maker":"IMR","Powder":"4227","Start charge (gr)":"31.5","Start velocity (fps)":"1284","Max charge (gr)":"32.5","Max velocity (fps)":"1334","COAL":"1.580\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Revolver velocities: Freedom Arms M555 7.5\"","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_300_Revolver.pdf"},{"ID":"SPR-14","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_325_Auto.pdf","Bullet weight (gr)":"325","Bullet":"Speer JHP (part 4495)","Powder maker":"Hodgdon","Powder":"H110","Start charge (gr)":"29.4","Start velocity (fps)":"1298","Max charge (gr)":"32.6","Max velocity (fps)":"1437","COAL":"1.575\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Auto-pistol table (test gun not named in PDF)","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_325_Auto.pdf"},{"ID":"SPR-15","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_325_Auto.pdf","Bullet weight (gr)":"325","Bullet":"Speer JHP (part 4495)","Powder maker":"Winchester","Powder":"296","Start charge (gr)":"29.5","Start velocity (fps)":"1279","Max charge (gr)":"32.7","Max velocity (fps)":"1409","COAL":"1.575\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Auto-pistol table (test gun not named in PDF)","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_325_Auto.pdf"},{"ID":"SPR-16","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_325_Auto.pdf","Bullet weight (gr)":"325","Bullet":"Speer JHP (part 4495)","Powder maker":"Alliant","Powder":"2400","Start charge (gr)":"26.0","Start velocity (fps)":"1259","Max charge (gr)":"28.0","Max velocity (fps)":"1377","COAL":"1.575\" (COAL tested)","Primer":"CCI 300","Case":"Speer","Test gun / barrel":"Auto-pistol table (test gun not named in PDF)","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_325_Auto.pdf"},{"ID":"SPR-17","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_325_Auto.pdf","Bullet weight (gr)":"325","Bullet":"Speer JHP (part 4495)","Powder maker":"Vihtavuori","Powder":"N110","Start charge (gr)":"25.0","Start velocity (fps)":"1229","Max charge (gr)":"27.0","Max velocity (fps)":"1376","COAL":"1.575\" (COAL tested)","Primer":"CCI 300","Case":"Speer","Test gun / barrel":"Auto-pistol table (test gun not named in PDF)","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_325_Auto.pdf"},{"ID":"SPR-18","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_325_Auto.pdf","Bullet weight (gr)":"325","Bullet":"Speer JHP (part 4495)","Powder maker":"Accurate","Powder":"1680","Start charge (gr)":"34.0","Start velocity (fps)":"1155","Max charge (gr)":"37.8 C","Max velocity (fps)":"1305","COAL":"1.575\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Auto-pistol table (test gun not named in PDF)","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer). Max is marked C (compressed).","Raw copy":"p50_raw/speer_50_Action_Express_325_Auto.pdf"},{"ID":"SPR-19","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_325_Auto.pdf","Bullet weight (gr)":"325","Bullet":"Speer JHP (part 4495)","Powder maker":"IMR","Powder":"4227","Start charge (gr)":"29.5","Start velocity (fps)":"1224","Max charge (gr)":"31.1","Max velocity (fps)":"1289","COAL":"1.575\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Auto-pistol table (test gun not named in PDF)","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_325_Auto.pdf"},{"ID":"SPR-20","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_325_Auto.pdf","Bullet weight (gr)":"325","Bullet":"Speer JHP (part 4495)","Powder maker":"Accurate","Powder":"No. 9","Start charge (gr)":"22.6","Start velocity (fps)":"1157","Max charge (gr)":"23.8","Max velocity (fps)":"1247","COAL":"1.575\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Auto-pistol table (test gun not named in PDF)","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_325_Auto.pdf"},{"ID":"SPR-21","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_325_Revolver.pdf","Bullet weight (gr)":"325","Bullet":"Speer JHP (part 4495)","Powder maker":"Hodgdon","Powder":"H110","Start charge (gr)":"29.4","Start velocity (fps)":"1324","Max charge (gr)":"32.6","Max velocity (fps)":"1475","COAL":"1.575\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Revolver velocities: Freedom Arms M555 7.5\"","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_325_Revolver.pdf"},{"ID":"SPR-22","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_325_Revolver.pdf","Bullet weight (gr)":"325","Bullet":"Speer JHP (part 4495)","Powder maker":"Winchester","Powder":"296","Start charge (gr)":"29.5","Start velocity (fps)":"1321","Max charge (gr)":"32.7","Max velocity (fps)":"1461","COAL":"1.575\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Revolver velocities: Freedom Arms M555 7.5\"","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_325_Revolver.pdf"},{"ID":"SPR-23","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_325_Revolver.pdf","Bullet weight (gr)":"325","Bullet":"Speer JHP (part 4495)","Powder maker":"Alliant","Powder":"2400","Start charge (gr)":"26.0","Start velocity (fps)":"1345","Max charge (gr)":"28.0","Max velocity (fps)":"1461","COAL":"1.575\" (COAL tested)","Primer":"CCI 300","Case":"Speer","Test gun / barrel":"Revolver velocities: Freedom Arms M555 7.5\"","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_325_Revolver.pdf"},{"ID":"SPR-24","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_325_Revolver.pdf","Bullet weight (gr)":"325","Bullet":"Speer JHP (part 4495)","Powder maker":"Vihtavuori","Powder":"N110","Start charge (gr)":"25.0","Start velocity (fps)":"1283","Max charge (gr)":"27.0","Max velocity (fps)":"1444","COAL":"1.575\" (COAL tested)","Primer":"CCI 300","Case":"Speer","Test gun / barrel":"Revolver velocities: Freedom Arms M555 7.5\"","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_325_Revolver.pdf"},{"ID":"SPR-25","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_325_Revolver.pdf","Bullet weight (gr)":"325","Bullet":"Speer JHP (part 4495)","Powder maker":"Accurate","Powder":"1680","Start charge (gr)":"34.0","Start velocity (fps)":"1243","Max charge (gr)":"37.8 C","Max velocity (fps)":"1374","COAL":"1.575\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Revolver velocities: Freedom Arms M555 7.5\"","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer). Max is marked C (compressed).","Raw copy":"p50_raw/speer_50_Action_Express_325_Revolver.pdf"},{"ID":"SPR-26","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_325_Revolver.pdf","Bullet weight (gr)":"325","Bullet":"Speer JHP (part 4495)","Powder maker":"IMR","Powder":"4227","Start charge (gr)":"29.5","Start velocity (fps)":"1256","Max charge (gr)":"31.1","Max velocity (fps)":"1344","COAL":"1.575\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Revolver velocities: Freedom Arms M555 7.5\"","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_325_Revolver.pdf"},{"ID":"SPR-27","Source":"Speer (Federal) free load data PDF","Source URL":"https://reloadingdata.federalpremium.com/downloads/speer/reloading-pdfs/handgun/50_Action_Express_325_Revolver.pdf","Bullet weight (gr)":"325","Bullet":"Speer JHP (part 4495)","Powder maker":"Accurate","Powder":"No. 9","Start charge (gr)":"22.6","Start velocity (fps)":"1270","Max charge (gr)":"23.8","Max velocity (fps)":"1318","COAL":"1.575\" (COAL tested)","Primer":"CCI 350","Case":"Speer","Test gun / barrel":"Revolver velocities: Freedom Arms M555 7.5\"","Pressure":"not listed","Notes":"\"Maximum loads should be used with CAUTION • C = Compressed Load\" (Speer).","Raw copy":"p50_raw/speer_50_Action_Express_325_Revolver.pdf"},{"ID":"VV-1","Source":"Vihtavuori Reloading Guide 2025 (p.130)","Source URL":"https://www.vihtavuori.com/wp-content/uploads/2025/11/Vihtavuori_Reloading_Guide_2025_ENG-compressed.pdf","Bullet weight (gr)":"300","Bullet":"IMI JHP","Powder maker":"Vihtavuori","Powder":"N105","Start charge (gr)":"19.4","Start velocity (fps)":"1296","Max charge (gr)":"21.3","Max velocity (fps)":"1430","COAL":"1.575\" (40,0 mm)","Primer":"Large Pistol","Case":"Speer, trim-to length 32,50 mm (1.280”)","Test gun / barrel":"Test barrel 150 mm (6”), 1 in 19” twist","Pressure":"not listed","Notes":"Metric as published: start 1,26 g / 395 m/s, max 1,38 g / 436 m/s. Guide: \"Light grey text box indicates maximum load - use with caution! Loads less than minimum charges shown are not recommended\" (shading not readable in text extraction).","Raw copy":"p50_raw/vv2025.pdf (page 66; text p50_raw/vv_p66L.txt, vv_p66R.txt)"},{"ID":"VV-2","Source":"Vihtavuori Reloading Guide 2025 (p.130)","Source URL":"https://www.vihtavuori.com/wp-content/uploads/2025/11/Vihtavuori_Reloading_Guide_2025_ENG-compressed.pdf","Bullet weight (gr)":"300","Bullet":"IMI JHP","Powder maker":"Vihtavuori","Powder":"N110","Start charge (gr)":"25.3","Start velocity (fps)":"1299","Max charge (gr)":"28.7","Max velocity (fps)":"1496","COAL":"1.575\" (40,0 mm)","Primer":"Large Pistol","Case":"Speer, trim-to length 32,50 mm (1.280”)","Test gun / barrel":"Test barrel 150 mm (6”), 1 in 19” twist","Pressure":"not listed","Notes":"Metric as published: start 1,64 g / 396 m/s, max 1,86 g / 456 m/s. Guide: \"Light grey text box indicates maximum load - use with caution! Loads less than minimum charges shown are not recommended\" (shading not readable in text extraction).","Raw copy":"p50_raw/vv2025.pdf (page 66; text p50_raw/vv_p66L.txt, vv_p66R.txt)"},{"ID":"VV-3","Source":"Vihtavuori Reloading Guide 2025 (p.130)","Source URL":"https://www.vihtavuori.com/wp-content/uploads/2025/11/Vihtavuori_Reloading_Guide_2025_ENG-compressed.pdf","Bullet weight (gr)":"300","Bullet":"IMI JHP","Powder maker":"Vihtavuori","Powder":"N120","Start charge (gr)":"32.6","Start velocity (fps)":"1191","Max charge (gr)":"36.0","Max velocity (fps)":"1368","COAL":"1.575\" (40,0 mm)","Primer":"Large Pistol","Case":"Speer, trim-to length 32,50 mm (1.280”)","Test gun / barrel":"Test barrel 150 mm (6”), 1 in 19” twist","Pressure":"not listed","Notes":"Metric as published: start 2,11 g / 363 m/s, max 2,33 g / 417 m/s. Guide: \"Light grey text box indicates maximum load - use with caution! Loads less than minimum charges shown are not recommended\" (shading not readable in text extraction).","Raw copy":"p50_raw/vv2025.pdf (page 66; text p50_raw/vv_p66L.txt, vv_p66R.txt)"},{"ID":"VV-4","Source":"Vihtavuori Reloading Guide 2025 (p.130)","Source URL":"https://www.vihtavuori.com/wp-content/uploads/2025/11/Vihtavuori_Reloading_Guide_2025_ENG-compressed.pdf","Bullet weight (gr)":"325","Bullet":"Speer UCHP","Powder maker":"Vihtavuori","Powder":"N105","Start charge (gr)":"17.7","Start velocity (fps)":"1171","Max charge (gr)":"19.4","Max velocity (fps)":"1332","COAL":"1.575\" (40,0 mm)","Primer":"Large Pistol","Case":"Speer, trim-to length 32,50 mm (1.280”)","Test gun / barrel":"Test barrel 150 mm (6”), 1 in 19” twist","Pressure":"not listed","Notes":"Metric as published: start 1,15 g / 357 m/s, max 1,26 g / 406 m/s. Guide: \"Light grey text box indicates maximum load - use with caution! Loads less than minimum charges shown are not recommended\" (shading not readable in text extraction).","Raw copy":"p50_raw/vv2025.pdf (page 66; text p50_raw/vv_p66L.txt, vv_p66R.txt)"},{"ID":"VV-5","Source":"Vihtavuori Reloading Guide 2025 (p.130)","Source URL":"https://www.vihtavuori.com/wp-content/uploads/2025/11/Vihtavuori_Reloading_Guide_2025_ENG-compressed.pdf","Bullet weight (gr)":"325","Bullet":"Speer UCHP","Powder maker":"Vihtavuori","Powder":"N110","Start charge (gr)":"24.1","Start velocity (fps)":"1266","Max charge (gr)":"27.0","Max velocity (fps)":"1434","COAL":"1.575\" (40,0 mm)","Primer":"Large Pistol","Case":"Speer, trim-to length 32,50 mm (1.280”)","Test gun / barrel":"Test barrel 150 mm (6”), 1 in 19” twist","Pressure":"not listed","Notes":"Metric as published: start 1,56 g / 386 m/s, max 1,75 g / 437 m/s. Guide: \"Light grey text box indicates maximum load - use with caution! Loads less than minimum charges shown are not recommended\" (shading not readable in text extraction).","Raw copy":"p50_raw/vv2025.pdf (page 66; text p50_raw/vv_p66L.txt, vv_p66R.txt)"},{"ID":"VV-6","Source":"Vihtavuori Reloading Guide 2025 (p.130)","Source URL":"https://www.vihtavuori.com/wp-content/uploads/2025/11/Vihtavuori_Reloading_Guide_2025_ENG-compressed.pdf","Bullet weight (gr)":"325","Bullet":"Speer UCHP","Powder maker":"Vihtavuori","Powder":"N120","Start charge (gr)":"30.7","Start velocity (fps)":"1142","Max charge (gr)":"34.4","Max velocity (fps)":"1339","COAL":"1.575\" (40,0 mm)","Primer":"Large Pistol","Case":"Speer, trim-to length 32,50 mm (1.280”)","Test gun / barrel":"Test barrel 150 mm (6”), 1 in 19” twist","Pressure":"not listed","Notes":"Metric as published: start 1,99 g / 348 m/s, max 2,23 g / 408 m/s. Guide: \"Light grey text box indicates maximum load - use with caution! Loads less than minimum charges shown are not recommended\" (shading not readable in text extraction).","Raw copy":"p50_raw/vv2025.pdf (page 66; text p50_raw/vv_p66L.txt, vv_p66R.txt)"},{"ID":"HDY-1","Source":"Hornady Basic Pistol Data PDF","Source URL":"https://static.hornady.media/site/hornady/files/load-data/basic-pistol-data.pdf","Bullet weight (gr)":"300","Bullet":"Hornady XTP (50 AE)","Powder maker":"Hodgdon","Powder":"Lil' Gun","Start charge (gr)":"24.3","Start velocity (fps)":"1200","Max charge (gr)":"31.7","Max velocity (fps)":"1450","COAL":"1.580\"","Primer":"not listed","Case":"not listed","Test gun / barrel":"6\" barrel","Pressure":"not listed","Notes":"Single starting/max line from Hornady's basic data sheet; full data is in the Hornady Handbook. Powder maker (Hodgdon) is added for filtering; the PDF says only \"Lil' Gun\".","Raw copy":"p50_raw/hornady_basic_pistol.pdf"}];
+const F=[['Source','Source'],['Bullet weight (gr)','Bullet weight'],['Bullet','Bullet'],['Powder maker','Powder maker'],['Powder','Powder'],['Test gun / barrel','Test gun / barrel']];
+D.forEach((r,i)=>Object.defineProperty(r,'_o',{value:i}));
+const f=document.getElementById('f');
+function wkey(v){const x=parseFloat(v);return isNaN(x)?1e9:x}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const escBreak=s=>esc(s).replace(/([/?&=])/g,'$1<wbr>');
+F.forEach(([k,l],i)=>{
+  let vals=[...new Set(D.map(r=>r[k]).filter(v=>v!==''))];
+  vals.sort(k.startsWith('Bullet weight')?(a,b)=>wkey(a)-wkey(b):undefined);
+  f.insertAdjacentHTML('beforeend',`<div><label>${esc(l)}<select id="s${i}" onchange="go()"><option value="">(any)</option>${vals.map(v=>`<option>${esc(v)}</option>`).join('')}</select></label></div>`);
+});
+f.insertAdjacentHTML('beforeend',`<div class="wide"><label>Keyword<input id="kw" oninput="go()" placeholder="e.g. Freedom Arms, compressed, CCI 350" autocomplete="off"></label></div><div><label>Min max-velocity<input id="vmin" type="number" inputmode="numeric" oninput="go()"></label></div><div><label>Max max-velocity<input id="vmax" type="number" inputmode="numeric" oninput="go()"></label></div>`);
+function vel(r){const v=String(r['Max velocity (fps)']).replace(/,/g,'');return v===''?null:+v}
+function go(){
+  const sel=F.map((x,i)=>document.getElementById('s'+i).value);
+  const kw=document.getElementById('kw').value.toLowerCase().trim();
+  const mn=document.getElementById('vmin').value,mx=document.getElementById('vmax').value;
+  let res=D.filter(r=>F.every(([k],i)=>!sel[i]||r[k]===sel[i]||(k.startsWith('Bullet weight')&&r[k].split('/').includes(sel[i])))
+    &&(!kw||kw.split(/\s+/).every(w=>Object.values(r).join(' ').toLowerCase().includes(w)))
+    &&(mn===''||(vel(r)!==null&&vel(r)>=+mn))&&(mx===''||(vel(r)!==null&&vel(r)<=+mx)));
+  const so=document.getElementById('so').value,dir=+document.getElementById('dir').value;
+  res.sort((a,b)=>{if(so==='ID')return (a._o-b._o)*dir;let x=String(a[so]).replace(/,/g,''),y=String(b[so]).replace(/,/g,'');const nx=parseFloat(x),ny=parseFloat(y);if(!isNaN(nx)&&!isNaN(ny))return (nx-ny)*dir;if(x===''&&y!=='')return 1;if(y===''&&x!=='')return -1;return String(x).localeCompare(String(y))*dir});
+  document.getElementById('cnt').textContent=res.length+' matching loads';
+  document.getElementById('out').innerHTML=res.slice(0,500).map(cardHtml).join('')+(res.length>500?'<p class="more">Showing first 500.</p>':'');
+}
+function cardHtml(r){
+  return `<div class="card"><b>${esc(r['Bullet weight (gr)'])} gr ${escBreak(r.Bullet)}</b><br>${escBreak(r['Powder maker'])} ${escBreak(r.Powder)}: start <b>${esc(r['Start charge (gr)'])} gr</b> (${esc(r['Start velocity (fps)'])} fps) &middot; <span class="grt">max ${esc(r['Max charge (gr)'])} gr</span> (${esc(r['Max velocity (fps)'])} fps)<br><span class="k">COAL ${escBreak(r.COAL)} &middot; Primer ${escBreak(r.Primer)} &middot; Case ${escBreak(r.Case)}<br>${escBreak(r['Test gun / barrel'])} &middot; Pressure: ${escBreak(r.Pressure)}</span><br><span class="pub">${escBreak(r.Source)} [${esc(r.ID)}]</span><div class="n">${escBreak(r.Notes)}<br>${escBreak(r['Source URL'])}</div><button type="button" class="print-btn" data-print="${esc(r.ID)}">Print this load card</button></div>`;
+}
+function printRow(label, value){
+  const shown=value===''||value==null?'\u2014':escBreak(value);
+  return `<div class="prow"><div class="plab">${esc(label)}</div><div class="pval">${shown}</div></div>`;
+}
+function renderPrint(r){
+  const safety=document.getElementById('safety').innerHTML;
+  return `<article class="sheet">
+    <p class="kicker">.50 AE load card ${esc(r.ID)}</p>
+    <h2>.50 Action Express</h2>
+    <p class="kind">Copied from ${esc(r.Source)}</p>
+    <div class="warn print-warn">${safety}</div>
+    ${printRow('Bullet', r['Bullet weight (gr)']+' gr '+r.Bullet)}
+    ${printRow('Powder', r['Powder maker']+' '+r.Powder)}
+    ${printRow('Start charge', r['Start charge (gr)']+' gr \u2014 '+r['Start velocity (fps)']+' fps')}
+    ${printRow('Max charge', r['Max charge (gr)']+' gr \u2014 '+r['Max velocity (fps)']+' fps')}
+    ${printRow('COAL', r.COAL)}
+    ${printRow('Primer', r.Primer)}
+    ${printRow('Case', r.Case)}
+    ${printRow('Test gun', r['Test gun / barrel'])}
+    ${printRow('Pressure', r.Pressure)}
+    ${printRow('Notes', r.Notes)}
+    ${printRow('Source', r.Source+' \u2014 '+r['Source URL'])}
+  </article>`;
+}
+function printLoad(id){
+  const r=D.find(row=>row.ID===id);
+  if(!r) return;
+  document.getElementById('printcard').innerHTML=renderPrint(r);
+  window.print();
+}
+function clr(){
+  F.forEach((x,i)=>document.getElementById('s'+i).value='');
+  ['kw','vmin','vmax'].forEach(i=>document.getElementById(i).value='');
+  go();
+}
+document.getElementById('so').addEventListener('change', go);
+document.getElementById('dir').addEventListener('change', go);
+document.getElementById('clr').addEventListener('click', clr);
+document.getElementById('out').addEventListener('click', e=>{
+  const btn=e.target.closest('button[data-print]');
+  if(!btn) return;
+  printLoad(btn.getAttribute('data-print'));
+});
+go();
+</script>
+</body>
+</html>
